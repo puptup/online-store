@@ -9,7 +9,7 @@ export const NavBar = () => {
       <MainWrapper>
         <HeaderWrapper>
           <NavLink to={'/'}>
-            Kashavar<span style={{ color: '#8c28ff' }}>&lsquo;</span>s store
+            Kashavar<Span>&lsquo;</Span>s store
           </NavLink>
           <Nav>
             <NavLink to={'/catalog'}>Catalog</NavLink>
@@ -20,6 +20,10 @@ export const NavBar = () => {
     </Header>
   )
 }
+
+const Span = styled.span`
+  color: ${(props) => props.theme.primaryColor};
+`
 
 const Nav = styled.nav`
   display: flex;
@@ -32,7 +36,7 @@ const NavLink = styled(Link)`
   font-weight: 500;
   font-size: 1.3rem;
   opacity: 0.8;
-
+  color: ${(props) => props.theme.secondaryColor};
   transition: opacity 0.1s ease-in;
   &:hover {
     opacity: 1;

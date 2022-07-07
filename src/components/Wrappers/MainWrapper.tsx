@@ -10,7 +10,7 @@ export const MainWrapper: FC<MainWrapperProps> = ({ children }) => {
 }
 
 const Wrapper = styled.main`
-  width: 1240px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 0 1.5rem;
 `

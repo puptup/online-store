@@ -6,6 +6,9 @@
 
   font-family: 'Roboto';
   box-sizing: border-box;
+}
 
-  color: #1e1e1e;
+#root {
+  position: relative;
+  min-height: 100vh;
 }
