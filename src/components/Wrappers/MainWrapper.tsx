@@ -9,8 +9,8 @@ export const MainWrapper: FC<MainWrapperProps> = ({ children }) => {
   return <Wrapper>{children}</Wrapper>
 }
 
-const Wrapper = styled.div`
-  width: 100%;
+const Wrapper = styled.main`
+  width: 1240px;
   margin: 0 auto;
   padding: 0 1.5rem;
 `

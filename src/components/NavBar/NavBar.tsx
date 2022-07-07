@@ -9,7 +9,7 @@ export const NavBar = () => {
       <MainWrapper>
         <HeaderWrapper>
           <NavLink to={'/'}>
-            Kashavar&lsquo;<span style={{ color: 'red' }}>s</span> store
+            Kashavar<span style={{ color: '#8c28ff' }}>&lsquo;</span>s store
           </NavLink>
           <Nav>
             <NavLink to={'/catalog'}>Catalog</NavLink>

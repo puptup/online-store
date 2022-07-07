@@ -1,14 +1,15 @@
 import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import { Footer } from '../components/Footer/Footer'
 import { NavBar } from '../components/NavBar/NavBar'
 
 export const TemplatePage = () => {
+  const location = useLocation()
   return (
     <>
       <NavBar />
       <Outlet />
-      <Footer />
+      {location.pathname !== '/' ? <Footer /> : null}
     </>
   )
 }
