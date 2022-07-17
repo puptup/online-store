@@ -1,17 +1,22 @@
 import { Product } from '../types'
-import { CatalogState, FilterValueArgs, FilterByRangeArgs } from './types'
+import { CatalogState, FilterValueArgs, FilterByRangeArgs, Sorting, FilterByValue } from './types'
 
 export const initialState: CatalogState = {
   shownProducts: [],
   products: [],
-  filters: {},
+  filters: (localStorage.getItem('filters') as FilterByValue) || {},
   rangeFilters: {},
+  sorting: Sorting.ASC,
+  search: '',
 }
 
 enum CatalogActionKind {
   SET_PRODUCTS = 'SET_PRODUCTS',
   SET_FILTER_BY_VALUE = 'SET_FILTER_BY_VALUE',
   SET_FILTER_BY_RANGE = 'SET_FILTER_BY_RANGE',
+  SET_SORTING = 'SET_SORTING',
+  SET_SEARCH_STRING = 'SET_SEARCH_STRING',
+  RESET_ALL_FILTERS = 'RESET_ALL_FILTERS',
 }
 
 interface SetProductsAction {
@@ -29,16 +34,40 @@ interface RangeFilterAction {
   payload: FilterByRangeArgs
 }
 
-export type CatalogActions = SetProductsAction | ValueFilterAction | RangeFilterAction
+interface SortingAction {
+  type: CatalogActionKind.SET_SORTING
+  payload: Sorting
+}
+
+interface SearchAction {
+  type: CatalogActionKind.SET_SEARCH_STRING
+  payload: string
+}
+
+interface ResetFiltersAction {
+  type: CatalogActionKind.RESET_ALL_FILTERS
+}
+
+export type CatalogActions =
+  | SetProductsAction
+  | ValueFilterAction
+  | RangeFilterAction
+  | SortingAction
+  | SearchAction
+  | ResetFiltersAction
 
 export function catalogReducer(state: CatalogState, action: CatalogActions): CatalogState {
-  const { type, payload } = action
+  const { type } = action
+
   switch (type) {
-    case CatalogActionKind.SET_PRODUCTS:
+    case CatalogActionKind.SET_PRODUCTS: {
+      const { payload } = action
       state.products = payload
       state.shownProducts = getShownProducts(state)
       return { ...state }
+    }
     case CatalogActionKind.SET_FILTER_BY_VALUE: {
+      const { payload } = action
       const { field, value } = payload
       if (state.filters[field]) {
         const indexOfNewFilter = state.filters[field]!.indexOf(value as never)
@@ -54,6 +83,7 @@ export function catalogReducer(state: CatalogState, action: CatalogActions): Cat
       return { ...state }
     }
     case CatalogActionKind.SET_FILTER_BY_RANGE: {
+      const { payload } = action
       const { field, value } = payload
       if (state.rangeFilters[field]) {
         state.rangeFilters[field]!.from = value.from
@@ -64,6 +94,31 @@ export function catalogReducer(state: CatalogState, action: CatalogActions): Cat
           to: value.to,
         }
       }
+
+      state.shownProducts = getShownProducts(state)
+      return { ...state }
+    }
+    case CatalogActionKind.SET_SORTING: {
+      const { payload } = action
+      if (state.sorting !== payload) {
+        state.sorting = payload
+        state.shownProducts = getShownProducts(state)
+      }
+      return { ...state }
+    }
+    case CatalogActionKind.SET_SEARCH_STRING: {
+      const { payload } = action
+      if (state.search !== payload) {
+        state.search = payload
+        state.shownProducts = getShownProducts(state)
+      }
+      return { ...state }
+    }
+    case CatalogActionKind.RESET_ALL_FILTERS: {
+      state.filters = {}
+      state.rangeFilters = {}
+      state.sorting = Sorting.ASC
+      state.search = ''
 
       state.shownProducts = getShownProducts(state)
       return { ...state }
@@ -87,6 +142,39 @@ const getShownProducts = (state: CatalogState) => {
         return product[field as never] >= value.from && product[field as never] <= value.to
       }),
     )
+    .sort((productA, productB) => {
+      switch (state.sorting) {
+        case Sorting.ASC: {
+          const nameA = productA.brand.toLowerCase(),
+            nameB = productB.brand.toLowerCase()
+          if (nameA < nameB) return -1
+          if (nameA > nameB) return 1
+          return 0
+        }
+        case Sorting.DESC: {
+          const nameA = productA.brand.toLowerCase(),
+            nameB = productB.brand.toLowerCase()
+          if (nameA > nameB) return -1
+          if (nameA < nameB) return 1
+          return 0
+        }
+        case Sorting.PriceASC: {
+          return productA.price - productB.price
+        }
+        case Sorting.PriceDESC: {
+          return productB.price - productA.price
+        }
+        case Sorting.MemoryASC: {
+          return Number(productA.memory) - Number(productB.memory)
+        }
+        case Sorting.MemoryDESC: {
+          return Number(productB.memory) - Number(productA.memory)
+        }
+      }
+    })
+    .filter((product) => {
+      return product.name.includes(state.search) || product.brand.includes(state.search)
+    })
 }
 
 export const setProducts = (payload: Product[]): SetProductsAction => {

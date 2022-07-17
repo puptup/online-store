@@ -5,6 +5,8 @@ export interface CatalogState {
   products: Array<Product>
   filters: FilterByValue
   rangeFilters: FilterByRange
+  sorting: Sorting
+  search: string
 }
 
 export type FilterByValue = {
@@ -29,4 +31,13 @@ export type FilterByRangeArgs<T = keyof Product> = {
     from: number
     to: number
   }
+}
+
+export enum Sorting {
+  ASC,
+  DESC,
+  PriceASC,
+  PriceDESC,
+  MemoryASC,
+  MemoryDESC,
 }
