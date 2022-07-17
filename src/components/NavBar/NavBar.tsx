@@ -45,7 +45,7 @@ const NavLink = styled(Link)`
 
 const Header = styled.header`
   width: 100%;
-  position: fixed;
+  position: absolute;
   border: 1px solid #eee;
 `
 

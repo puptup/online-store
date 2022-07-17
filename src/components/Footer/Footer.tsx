@@ -14,7 +14,7 @@ export const Footer = () => {
 
 const FooterComponent = styled.footer`
   width: 100%;
-  position: fixed;
+  position: absolute;
   bottom: 0;
   border: 1px solid #eee;
 `
