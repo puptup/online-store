@@ -34,23 +34,19 @@ export const Catalog: FC = () => {
   const onChange = useCallback(
     (value: number) => {
       if (cardsState) {
-        if (cardsState.cart.length > 19) {
-          alert('You cannot add more than 20 items to your cart')
+        if (cardsState.cart.includes(value)) {
+          setCardsState((prev) => {
+            if (prev) {
+              const newCards = prev.cart.filter((id) => id !== value)
+              return { cart: newCards }
+            }
+          })
         } else {
-          if (cardsState.cart.includes(value)) {
-            setCardsState((prev) => {
-              if (prev) {
-                const newCards = prev.cart.filter((id) => id !== value)
-                return { cart: newCards }
-              }
-            })
-          } else {
-            setCardsState((prev) => {
-              if (prev) {
-                return { cart: [...prev.cart, value] }
-              }
-            })
-          }
+          setCardsState((prev) => {
+            if (prev) {
+              return { cart: [...prev.cart, value] }
+            }
+          })
         }
       }
     },

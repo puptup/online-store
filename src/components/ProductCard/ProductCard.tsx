@@ -12,18 +12,24 @@ interface ProductCardProps {
 }
 
 export const ProductCard: FC<ProductCardProps> = ({ product, choisedProducts, onChange }) => {
-  const { cartDispatch } = useGlobalContext()
+  const { cartState, cartDispatch } = useGlobalContext()
   const [status, setStatus] = useState<boolean>(false)
 
   const handleClick = useCallback(() => {
-    onChange(product.id)
     if (!status) {
-      cartDispatch(addToCart(product.id))
+      if (cartState.cart.length > 19) {
+        alert('You cannot add more than 20 products in your cart')
+      } else {
+        onChange(product.id)
+        cartDispatch(addToCart(product.id))
+        setStatus(true)
+      }
     } else {
+      onChange(product.id)
       cartDispatch(removeFromCart(product.id))
+      setStatus(false)
     }
-    setStatus(!status)
-  }, [status])
+  }, [status, cartState])
 
   useEffect(() => {
     if (choisedProducts.includes(product.id)) {

@@ -166,5 +166,90 @@
     "year": 2021,
     "count": 108,
     "price": 400
+  },
+
+  {
+    "id": 15,
+    "brand": "Samsung",
+    "name": "Galaxy A52",
+    "memory": "128",
+    "rating": 4,
+    "color": "black",
+    "image": "https://content2.onliner.by/catalog/device/header@2/0bde71a90a551c172c6a9e290d1cdbed.jpeg",
+    "year": 2021,
+    "count": 77,
+    "price": 320
+  },
+  {
+    "id": 16,
+    "brand": "Samsung",
+    "name": "Galaxy S10e",
+    "memory": "128",
+    "rating": 5,
+    "color": "black",
+    "image": "https://content2.onliner.by/catalog/device/header@2/b2c0f7fa25003ccad4d9c494ba4a7d46.jpeg",
+    "year": 2019,
+    "count": 30,
+    "price": 550
+  },
+  {
+    "id": 17,
+    "brand": "Google",
+    "name": "Pixel 3a",
+    "memory": "64",
+    "rating": 4,
+    "color": "black",
+    "image": "https://content2.onliner.by/catalog/device/header@2/ec083be299f99ccdbcbb47c6ba6a51bc.jpeg",
+    "year": 2019,
+    "count": 33,
+    "price": 300
+  },
+  {
+    "id": 18,
+    "brand": "Xiaomi",
+    "name": "Redmi Note 11 Pro",
+    "memory": "128",
+    "rating": 5,
+    "color": "white",
+    "image": "https://content2.onliner.by/catalog/device/header@2/50fb5428746615cf77ea6fd43bbe436d.jpeg",
+    "year": 2019,
+    "count": 10,
+    "price": 490
+  },
+  {
+    "id": 19,
+    "brand": "Xiaomi",
+    "name": "Redmi Note 8",
+    "memory": "64",
+    "rating": 4,
+    "color": "black",
+    "image": "https://content2.onliner.by/catalog/device/header@2/55713c0c22f036c83303454a2c7168d1.jpeg",
+    "year": 2019,
+    "count": 11,
+    "price": 250
+  },
+  {
+    "id": 20,
+    "brand": "Xiaomi",
+    "name": "Redmi Note 8",
+    "memory": "64",
+    "rating": 4,
+    "color": "black",
+    "image": "https://content2.onliner.by/catalog/device/header@2/1f18a8f6f97717dc3c6cacaa0fad7334.jpeg",
+    "year": 2019,
+    "count": 11,
+    "price": 250
+  },
+  {
+    "id": 21,
+    "brand": "Samsung",
+    "name": "Galaxy S9",
+    "memory": "128",
+    "rating": 4.5,
+    "color": "white",
+    "image": "https://content2.onliner.by/catalog/device/header@2/198eab8de1166942eff6c394f2ca8980.jpeg",
+    "year": 2018,
+    "count": 3,
+    "price": 390
   }
 ]
