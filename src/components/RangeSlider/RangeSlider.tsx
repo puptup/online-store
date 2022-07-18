@@ -1,21 +1,27 @@
 import Nouislider from 'nouislider-react'
 import React, { FC } from 'react'
-import { useGlobalContext } from '../../context'
-import { setFilterByRange } from '../../reducers/reducer'
-import { Product } from '../../types'
 
 interface RangeSliderProps {
-  field: keyof Product
-  from: number
-  to: number
+  rangeValues?: {
+    from: number
+    to: number
+  }
+  startValues: {
+    from: number
+    to: number
+  }
+  onChange: (value: { from: number; to: number }) => void
 }
 
-export const RangeSlider: FC<RangeSliderProps> = ({ field, from, to }) => {
-  const { dispatch } = useGlobalContext()
+export const RangeSlider: FC<RangeSliderProps> = ({
+  rangeValues = { from: 0, to: 1 },
+  startValues,
+  onChange,
+}) => {
   return (
     <Nouislider
-      range={{ min: from, max: to }}
-      start={[from, to]}
+      range={{ min: startValues.from, max: startValues.to }}
+      start={[rangeValues.from, rangeValues.to]}
       step={1}
       format={{
         to: function (value) {
@@ -28,12 +34,8 @@ export const RangeSlider: FC<RangeSliderProps> = ({ field, from, to }) => {
       connect
       tooltips={[true, true]}
       behaviour='tap-drag'
-      style={{ fontSize: 14, width: '70%' }}
-      onSlide={(a) =>
-        dispatch(
-          setFilterByRange({ field: field, value: { from: Number(a[0]), to: Number(a[1]) } }),
-        )
-      }
+      style={{ fontSize: 14, marginTop: '25px' }}
+      onSlide={(a) => onChange({ from: Number(a[0]), to: Number(a[1]) })}
     />
   )
 }

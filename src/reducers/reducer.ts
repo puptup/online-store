@@ -1,5 +1,5 @@
 import { Product } from '../types'
-import { CatalogState, FilterValueArgs, FilterByRangeArgs, Sorting, FilterByValue } from './types'
+import { CatalogState, FilterValueArgs, FilterByRangeArgs, Sorting } from './types'
 
 const get = (name: string) => {
   const store = localStorage.getItem(name)
@@ -185,28 +185,45 @@ const getShownProducts = (state: CatalogState) => {
       }
     })
     .filter((product) => {
-      return product.name.includes(state.search) || product.brand.includes(state.search)
+      return (
+        product.name.toLowerCase().includes(state.search.toLowerCase()) ||
+        product.brand.toLowerCase().includes(state.search.toLowerCase())
+      )
     })
 }
 
 export const setProducts = (payload: Product[]): SetProductsAction => {
   return {
     type: CatalogActionKind.SET_PRODUCTS,
-    payload: payload,
+    payload,
   }
 }
 
 export const setFilterByValue = (payload: FilterValueArgs): ValueFilterAction => {
   return {
     type: CatalogActionKind.SET_FILTER_BY_VALUE,
-    payload: payload,
+    payload,
   }
 }
 
 export const setFilterByRange = (payload: FilterByRangeArgs): RangeFilterAction => {
   return {
     type: CatalogActionKind.SET_FILTER_BY_RANGE,
-    payload: payload,
+    payload,
+  }
+}
+
+export const setSearchString = (payload: string): SearchAction => {
+  return {
+    type: CatalogActionKind.SET_SEARCH_STRING,
+    payload,
+  }
+}
+
+export const setSorting = (payload: Sorting): SortingAction => {
+  return {
+    type: CatalogActionKind.SET_SORTING,
+    payload,
   }
 }
 

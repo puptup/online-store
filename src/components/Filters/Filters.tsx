@@ -1,82 +1,72 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useGlobalContext } from '../../context'
-import { resetFilters, setFilterByValue } from '../../reducers/reducer'
-import { Product } from '../../types'
+import {
+  resetFilters,
+  setFilterByRange,
+  setFilterByValue,
+  setSearchString,
+  setSorting,
+} from '../../reducers/reducer'
+import { Sorting } from '../../reducers/types'
+import { CheckBoxGroup } from '../CheckBoxGroup/CheckBoxGroup'
 import { RangeSlider } from '../RangeSlider/RangeSlider'
+import { Searcher } from '../Searcher/Searcher'
 
-type OnCheckBoxChange = (event: { value: boolean; field: string; name: string }) => void
-
-interface CheckBoxProps {
-  name: string
-  field: string
-  checked: boolean
-  onChange: OnCheckBoxChange
+interface SortingBoxProps {
+  value: Sorting
+  onChange: (value: Sorting) => void
 }
 
-const CheckBox: FC<CheckBoxProps> = ({ name, field, checked, onChange }) => {
-  return (
-    <label>
-      {name}
-      <input
-        type='checkbox'
-        checked={checked}
-        name={name}
-        onChange={(e) =>
-          onChange({
-            value: e.target.checked,
-            field,
-            name,
-          })
-        }
-      />
-    </label>
-  )
-}
-
-type CheckBoxGroupProps = {
-  field: string
-  values: string[]
-  checkedValues?: string[]
-  onChange: (values: string[]) => void
-}
-
-const CheckBoxGroup: FC<CheckBoxGroupProps> = ({ field, values, checkedValues = [], onChange }) => {
-  const onCheckBoxChange: OnCheckBoxChange = useCallback(
-    ({ name, value }) => {
-      if (value) {
-        onChange([...checkedValues, name])
-      } else {
-        onChange(checkedValues.filter((value) => name !== value))
-      }
-    },
-    [checkedValues, onChange],
-  )
-
+const SortingBox: FC<SortingBoxProps> = ({ value, onChange }) => {
   return (
     <>
-      {values.map((value) => (
-        <CheckBox
-          key={value}
-          field={field}
-          name={value}
-          onChange={onCheckBoxChange}
-          checked={checkedValues.includes(value)}
-        />
-      ))}
+      <select
+        name='select'
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value) as Sorting)}
+      >
+        <option value={Sorting.ASC}>By title, from A to Z</option>
+        <option value={Sorting.DESC}>By title, from Z to A</option>
+        <option value={Sorting.PriceASC}>By price, ascending</option>
+        <option value={Sorting.PriceDESC}>By price, descending</option>
+        <option value={Sorting.MemoryASC}>By memory, ascending</option>
+        <option value={Sorting.MemoryDESC}>By memory, descending</option>
+      </select>
     </>
   )
 }
 
+export default SortingBox
+
 const initFormValue = {
   color: [] as string[],
+  brand: [] as string[],
+  countRange: {
+    from: 0,
+    to: 200,
+  },
+  yearRange: {
+    from: 2000,
+    to: 2022,
+  },
+  sorting: Sorting.ASC,
+  search: '',
 }
 
 const ALL_COLORS = ['red', 'black', 'white']
+const ALL_BRANDS = ['Apple', 'Google', 'Xiaomi', 'Samsung']
 
 export const Form = () => {
   const { dispatch } = useGlobalContext()
-  const [formState, setFormState] = useState<{ color: string[] }>()
+  const [formState, setFormState] = useState<{
+    color?: string[]
+    brand?: string[]
+    countRange?: { from: number; to: number }
+    yearRange?: { from: number; to: number }
+    sorting?: Sorting
+    search?: string
+  }>()
 
   useEffect(() => {
     const storeFormState = localStorage.getItem('formState')
@@ -85,7 +75,7 @@ export const Form = () => {
       try {
         setFormState(JSON.parse(storeFormState))
       } catch (e) {
-        console.log(e)
+        console.log('error...', e)
       }
     } else {
       setFormState(initFormValue)
@@ -106,6 +96,46 @@ export const Form = () => {
     }))
   }, [])
 
+  const onBrandChange = useCallback((value: string[]) => {
+    dispatch(setFilterByValue({ field: 'brand', value: value }))
+    setFormState((state) => ({
+      ...state,
+      brand: value,
+    }))
+  }, [])
+
+  const onCountRangeChange = useCallback((value: { from: number; to: number }) => {
+    dispatch(setFilterByRange({ field: 'count', value: { from: value.from, to: value.to } }))
+    setFormState((state) => ({
+      ...state,
+      countRange: value,
+    }))
+  }, [])
+
+  const onYearRangeChange = useCallback((value: { from: number; to: number }) => {
+    dispatch(setFilterByRange({ field: 'year', value: { from: value.from, to: value.to } }))
+    setFormState((state) => ({
+      ...state,
+      yearRange: value,
+    }))
+  }, [])
+
+  const onSearchChange = useCallback((value: string) => {
+    dispatch(setSearchString(value))
+    setFormState((state) => ({
+      ...state,
+      search: value,
+    }))
+  }, [])
+
+  const onSortingChange = useCallback((value: Sorting) => {
+    dispatch(setSorting(value))
+    setFormState((state) => ({
+      ...state,
+      sorting: value,
+    }))
+  }, [])
+
   const handleReset = useCallback(() => {
     setFormState({ ...initFormValue })
     dispatch(resetFilters())
@@ -113,12 +143,44 @@ export const Form = () => {
 
   return (
     <>
-      <CheckBoxGroup
-        field='color'
-        checkedValues={formState?.color}
-        onChange={onColorChange}
-        values={ALL_COLORS}
-      />
+      <SortingBox value={formState?.sorting || Sorting.ASC} onChange={onSortingChange}></SortingBox>
+      <FilterCategory>
+        <Searcher searchValue={formState?.search || ''} onChange={onSearchChange}></Searcher>
+      </FilterCategory>
+      <FilterCategory>
+        <h4>Colors:</h4>
+        <CheckBoxGroup
+          field='color'
+          checkedValues={formState?.color}
+          onChange={onColorChange}
+          values={ALL_COLORS}
+        />
+      </FilterCategory>
+      <FilterCategory>
+        <h4>Brands:</h4>
+        <CheckBoxGroup
+          field='brand'
+          checkedValues={formState?.brand}
+          onChange={onBrandChange}
+          values={ALL_BRANDS}
+        />
+      </FilterCategory>
+      <FilterCategory>
+        <h4>Count:</h4>
+        <RangeSlider
+          rangeValues={formState?.countRange}
+          onChange={onCountRangeChange}
+          startValues={{ from: 0, to: 200 }}
+        />
+      </FilterCategory>
+      <FilterCategory>
+        <h4>Year:</h4>
+        <RangeSlider
+          rangeValues={formState?.yearRange}
+          onChange={onYearRangeChange}
+          startValues={{ from: 2000, to: 2022 }}
+        />
+      </FilterCategory>
       <button onClick={handleReset}>RESET</button>
     </>
   )
@@ -128,29 +190,22 @@ export const Filters = () => {
   return (
     <Filter>
       <Form />
-      {/* <FilterCategory>
-        <h4>Brands:</h4>
-        {['Google', 'Xiaomi', 'Samsung', 'Apple'].map((name) => (
-          <div key={'brand' + name} style={{ display: 'flex', gap: '20px' }}>
-            <Input name={name} field={'brand'} reset={reset} />
-            <p>{name}</p>
-          </div>
-        ))}
-      </FilterCategory> */}
-      {/* <RangeSlider field={'year'} from={2000} to={2022} />
-      <RangeSlider field={'count'} from={0} to={200} /> */}
     </Filter>
   )
 }
 
 const FilterCategory = styled.div`
   padding: 0 20px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   display: flex;
   flex-direction: column;
+  min-width: 200px;
 `
 
 const Filter = styled.div`
   height: calc(100vh - 58.5px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 250px;
 `

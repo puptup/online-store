@@ -12,3 +12,8 @@
   position: relative;
   min-height: 100vh;
 }
+
+.noUi-horizontal .noUi-tooltip {
+  bottom: -30px;
+  font-size: 10px;
+}
