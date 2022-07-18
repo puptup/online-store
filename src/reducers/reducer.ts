@@ -1,13 +1,21 @@
 import { Product } from '../types'
 import { CatalogState, FilterValueArgs, FilterByRangeArgs, Sorting, FilterByValue } from './types'
 
+const get = (name: string) => {
+  const store = localStorage.getItem(name)
+  if (store) {
+    return JSON.parse(store)
+  }
+  return store
+}
+
 export const initialState: CatalogState = {
   shownProducts: [],
   products: [],
-  filters: (localStorage.getItem('filters') as FilterByValue) || {},
-  rangeFilters: {},
-  sorting: Sorting.ASC,
-  search: '',
+  filters: get('filtersByValue') || {},
+  rangeFilters: get('filtersByRange') || {},
+  sorting: get('sortingFilter') || Sorting.ASC,
+  search: get('searchStatus') || '',
 }
 
 enum CatalogActionKind {
@@ -69,17 +77,14 @@ export function catalogReducer(state: CatalogState, action: CatalogActions): Cat
     case CatalogActionKind.SET_FILTER_BY_VALUE: {
       const { payload } = action
       const { field, value } = payload
+      console.log(value)
       if (state.filters[field]) {
-        const indexOfNewFilter = state.filters[field]!.indexOf(value as never)
-        if (indexOfNewFilter !== -1) {
-          state.filters[field]!.splice(indexOfNewFilter, 1)
-        } else {
-          state.filters[field]!.push(value as never)
-        }
+        state.filters[field] = [...(value as never)]
       } else {
-        state.filters[field] = [value as never]
+        state.filters[field] = [...(value as never)]
       }
       state.shownProducts = getShownProducts(state)
+      localStorage.setItem('filtersByValue', JSON.stringify(state.filters))
       return { ...state }
     }
     case CatalogActionKind.SET_FILTER_BY_RANGE: {
@@ -96,6 +101,7 @@ export function catalogReducer(state: CatalogState, action: CatalogActions): Cat
       }
 
       state.shownProducts = getShownProducts(state)
+      localStorage.setItem('filtersByRange', JSON.stringify(state.rangeFilters))
       return { ...state }
     }
     case CatalogActionKind.SET_SORTING: {
@@ -104,6 +110,7 @@ export function catalogReducer(state: CatalogState, action: CatalogActions): Cat
         state.sorting = payload
         state.shownProducts = getShownProducts(state)
       }
+      localStorage.setItem('sortingFilter', JSON.stringify(state.sorting))
       return { ...state }
     }
     case CatalogActionKind.SET_SEARCH_STRING: {
@@ -112,6 +119,7 @@ export function catalogReducer(state: CatalogState, action: CatalogActions): Cat
         state.search = payload
         state.shownProducts = getShownProducts(state)
       }
+      localStorage.setItem('searchStatus', JSON.stringify(state.search))
       return { ...state }
     }
     case CatalogActionKind.RESET_ALL_FILTERS: {
@@ -120,6 +128,10 @@ export function catalogReducer(state: CatalogState, action: CatalogActions): Cat
       state.sorting = Sorting.ASC
       state.search = ''
 
+      localStorage.setItem('filtersByRange', JSON.stringify(state.rangeFilters))
+      localStorage.setItem('filtersByValue', JSON.stringify(state.filters))
+      localStorage.setItem('sortingFilter', JSON.stringify(state.sorting))
+      localStorage.setItem('searchStatus', JSON.stringify(state.search))
       state.shownProducts = getShownProducts(state)
       return { ...state }
     }
@@ -137,10 +149,10 @@ const getShownProducts = (state: CatalogState) => {
       ),
     )
     .filter((product) =>
-      Object.entries(state.rangeFilters).every(([field, value]) => {
-        console.log(product[field as never], value.from, value.to)
-        return product[field as never] >= value.from && product[field as never] <= value.to
-      }),
+      Object.entries(state.rangeFilters).every(
+        ([field, value]) =>
+          product[field as never] >= value.from && product[field as never] <= value.to,
+      ),
     )
     .sort((productA, productB) => {
       switch (state.sorting) {
@@ -195,5 +207,11 @@ export const setFilterByRange = (payload: FilterByRangeArgs): RangeFilterAction 
   return {
     type: CatalogActionKind.SET_FILTER_BY_RANGE,
     payload: payload,
+  }
+}
+
+export const resetFilters = (): ResetFiltersAction => {
+  return {
+    type: CatalogActionKind.RESET_ALL_FILTERS,
   }
 }

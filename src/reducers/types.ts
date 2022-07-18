@@ -15,7 +15,7 @@ export type FilterByValue = {
 
 export type FilterValueArgs<T = keyof Product> = {
   field: T
-  value: Product[keyof Product]
+  value: Product[keyof Product][]
 }
 
 export type FilterByRange = {
