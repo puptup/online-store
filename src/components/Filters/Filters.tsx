@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useGlobalContext } from '../../context'
 import {
@@ -12,32 +12,7 @@ import { Sorting } from '../../reducers/types'
 import { CheckBoxGroup } from '../CheckBoxGroup/CheckBoxGroup'
 import { RangeSlider } from '../RangeSlider/RangeSlider'
 import { Searcher } from '../Searcher/Searcher'
-
-interface SortingBoxProps {
-  value: Sorting
-  onChange: (value: Sorting) => void
-}
-
-const SortingBox: FC<SortingBoxProps> = ({ value, onChange }) => {
-  return (
-    <>
-      <select
-        name='select'
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value) as Sorting)}
-      >
-        <option value={Sorting.ASC}>By title, from A to Z</option>
-        <option value={Sorting.DESC}>By title, from Z to A</option>
-        <option value={Sorting.PriceASC}>By price, ascending</option>
-        <option value={Sorting.PriceDESC}>By price, descending</option>
-        <option value={Sorting.MemoryASC}>By memory, ascending</option>
-        <option value={Sorting.MemoryDESC}>By memory, descending</option>
-      </select>
-    </>
-  )
-}
-
-export default SortingBox
+import { SortingBox } from '../SortingBox/SortingBox'
 
 const initFormValue = {
   color: [] as string[],
