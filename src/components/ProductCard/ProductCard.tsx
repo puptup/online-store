@@ -37,7 +37,6 @@ export const ProductCard: FC<ProductCardProps> = ({ product, choisedProducts, on
     <Div>
       <Img src={product.image} />
       <h4>{product.brand}</h4>
-      <h4>{product.id}</h4>
       <h3>{product.name}</h3>
       <h6>{product.memory}gb</h6>
 
