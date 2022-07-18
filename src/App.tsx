@@ -7,13 +7,15 @@ import { MainPage } from './pages/MainPage'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { ProductPage } from './pages/ProductPage'
 import { TemplatePage } from './pages/TemplatePage'
-import { catalogReducer, initialState } from './reducers/reducer'
+import { cartReducer, initialCartState } from './reducers/cartReducer'
+import { catalogReducer, initialState } from './reducers/catalogReducer'
 
 const App = () => {
   const [state, dispatch] = useReducer(catalogReducer, initialState)
+  const [cartState, cartDispatch] = useReducer(cartReducer, initialCartState)
 
   return (
-    <StateContext.Provider value={{ state, dispatch }}>
+    <StateContext.Provider value={{ state, dispatch, cartState, cartDispatch }}>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<TemplatePage />}>

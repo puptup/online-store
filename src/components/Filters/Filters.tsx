@@ -7,7 +7,7 @@ import {
   setFilterByValue,
   setSearchString,
   setSorting,
-} from '../../reducers/reducer'
+} from '../../reducers/catalogReducer'
 import { Sorting } from '../../reducers/types'
 import { CheckBoxGroup } from '../CheckBoxGroup/CheckBoxGroup'
 import { RangeSlider } from '../RangeSlider/RangeSlider'
@@ -161,7 +161,7 @@ export const Form = () => {
           startValues={{ from: 2000, to: 2022 }}
         />
       </FilterCategory>
-      <button onClick={handleReset}>RESET</button>
+      <button onClick={handleReset}>Reset filters</button>
     </>
   )
 }

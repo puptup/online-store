@@ -1,18 +1,44 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FC } from 'react'
 import styled from 'styled-components'
+import { useGlobalContext } from '../../context'
+import { addToCart, removeFromCart } from '../../reducers/cartReducer'
 import { Product } from '../../types'
 
 interface ProductCardProps {
   product: Product
+  choisedProducts: number[]
+  onChange: (value: number) => void
 }
 
-export const ProductCard: FC<ProductCardProps> = ({ product }) => {
+export const ProductCard: FC<ProductCardProps> = ({ product, choisedProducts, onChange }) => {
+  const { cartDispatch } = useGlobalContext()
+  const [status, setStatus] = useState<boolean>(false)
+
+  const handleClick = useCallback(() => {
+    onChange(product.id)
+    if (!status) {
+      cartDispatch(addToCart(product.id))
+    } else {
+      cartDispatch(removeFromCart(product.id))
+    }
+    setStatus(!status)
+  }, [status])
+
+  useEffect(() => {
+    if (choisedProducts.includes(product.id)) {
+      setStatus(true)
+    }
+  }, [choisedProducts])
+
   return (
     <Div>
       <Img src={product.image} />
       <h4>{product.brand}</h4>
+      <h4>{product.id}</h4>
       <h3>{product.name}</h3>
+      <h6>{product.memory}gb</h6>
+
       <h5>{product.year}</h5>
       <p style={{ marginTop: 20, color: 'green' }}>{product.price}$</p>
       <div
@@ -23,7 +49,16 @@ export const ProductCard: FC<ProductCardProps> = ({ product }) => {
           rating: <span style={{ color: '#5300ff' }}>{product.rating}★</span>
         </h6>
       </div>
-      <Button>Add to cart</Button>
+      <Button
+        onClick={handleClick}
+        style={
+          status
+            ? { backgroundColor: 'rgba(14, 200, 25, 0.3)', color: 'rgba(14, 200, 25, 1)' }
+            : { backgroundColor: 'rgba(140, 40, 255, 0.3)', color: 'rgba(140, 40, 255, 1)' }
+        }
+      >
+        {!status ? 'Add to cart' : 'Remove from cart'}
+      </Button>
     </Div>
   )
 }
@@ -50,7 +85,6 @@ const Button = styled.button`
   border: 1px solid;
   border-radius: 5px;
   padding: 10px;
-  background-color: rgba(140, 40, 255, 0.3);
   color: ${(props) => props.theme.primaryColor};
   opacity: 0.8;
 `

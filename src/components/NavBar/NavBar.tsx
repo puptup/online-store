@@ -1,9 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
+import { useGlobalContext } from '../../context'
 import { MainWrapper } from '../Wrappers/MainWrapper'
 
 export const NavBar = () => {
+  const { cartState } = useGlobalContext()
+  console.log(cartState)
   return (
     <Header>
       <MainWrapper>
@@ -13,7 +16,9 @@ export const NavBar = () => {
           </NavLink>
           <Nav>
             <NavLink to={'/catalog'}>Catalog</NavLink>
-            <NavLink to={'/cart'}>Cart</NavLink>
+            <NavLink to={'/cart'}>
+              Cart <span style={{ color: 'red' }}>{cartState.cart.length}</span>
+            </NavLink>
           </Nav>
         </HeaderWrapper>
       </MainWrapper>
