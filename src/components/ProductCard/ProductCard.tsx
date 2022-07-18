@@ -28,6 +28,8 @@ export const ProductCard: FC<ProductCardProps> = ({ product, choisedProducts, on
   useEffect(() => {
     if (choisedProducts.includes(product.id)) {
       setStatus(true)
+    } else {
+      setStatus(false)
     }
   }, [choisedProducts])
 

@@ -1,6 +1,7 @@
 import React, { FC, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { useGlobalContext } from '../../context'
+import { resetCart } from '../../reducers/cartReducer'
 import { ProductCard } from '../ProductCard/ProductCard'
 
 const initialCartState = {
@@ -8,7 +9,7 @@ const initialCartState = {
 }
 
 export const Catalog: FC = () => {
-  const { state } = useGlobalContext()
+  const { state, cartDispatch } = useGlobalContext()
 
   const [cardsState, setCardsState] = useState<{ cart: number[] }>()
   useEffect(() => {
@@ -28,32 +29,44 @@ export const Catalog: FC = () => {
     if (cardsState) {
       localStorage.setItem('cart', JSON.stringify(cardsState))
     }
-  }, [cardsState])
+  }, [cardsState, setCardsState])
 
   const onChange = useCallback(
     (value: number) => {
       if (cardsState) {
-        if (cardsState.cart.includes(value)) {
-          setCardsState((prev) => {
-            if (prev) {
-              const newCards = prev.cart.filter((id) => id !== value)
-              return { cart: newCards }
-            }
-          })
+        if (cardsState.cart.length > 19) {
+          alert('You cannot add more than 20 items to your cart')
         } else {
-          setCardsState((prev) => {
-            if (prev) {
-              return { cart: [...prev.cart, value] }
-            }
-          })
+          if (cardsState.cart.includes(value)) {
+            setCardsState((prev) => {
+              if (prev) {
+                const newCards = prev.cart.filter((id) => id !== value)
+                return { cart: newCards }
+              }
+            })
+          } else {
+            setCardsState((prev) => {
+              if (prev) {
+                return { cart: [...prev.cart, value] }
+              }
+            })
+          }
         }
       }
     },
     [cardsState, setCardsState],
   )
 
+  const resetHandler = useCallback(() => {
+    cartDispatch(resetCart())
+    setCardsState(initialCartState)
+  }, [])
+
   return (
     <CatalogWrapper>
+      <button style={{ position: 'absolute', top: '-1px', right: 0 }} onClick={resetHandler}>
+        reset products
+      </button>
       {state.shownProducts.length ? (
         state.shownProducts.map((product) => {
           return (
@@ -80,4 +93,5 @@ const CatalogWrapper = styled.div`
   display: flex;
   padding: 20px;
   width: 100%;
+  position: relative;
 `

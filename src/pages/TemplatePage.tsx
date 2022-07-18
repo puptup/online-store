@@ -8,7 +8,7 @@ export const TemplatePage = () => {
     <>
       <NavBar />
       <Outlet />
-      {/* <Footer /> */}
+      <Footer />
     </>
   )
 }
