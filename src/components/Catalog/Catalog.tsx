@@ -60,9 +60,9 @@ export const Catalog: FC = () => {
 
   return (
     <CatalogWrapper>
-      <button style={{ position: 'absolute', top: '-1px', right: 0 }} onClick={resetHandler}>
+      <Button style={{ position: 'absolute', top: '-1px', right: 0 }} onClick={resetHandler}>
         reset products
-      </button>
+      </Button>
       {state.shownProducts.length ? (
         state.shownProducts.map((product) => {
           return (
@@ -80,6 +80,20 @@ export const Catalog: FC = () => {
     </CatalogWrapper>
   )
 }
+
+const Button = styled.button`
+  color: #ffa500;
+  background-color: rgba(255, 165, 0, 0.3);
+  border: 1px solid #ffa500;
+  padding: 5px;
+  transition: all 0.1s ease-in;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+`
 
 const CatalogWrapper = styled.div`
   gap: 20px 100px;

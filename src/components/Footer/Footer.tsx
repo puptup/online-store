@@ -22,7 +22,6 @@ export const Footer = () => {
 
 const FooterComponent = styled.footer`
   width: 100%;
-  position: absolute;
   bottom: revert;
   border: 1px solid #eee;
 `
