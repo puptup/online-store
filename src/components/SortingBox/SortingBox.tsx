@@ -9,6 +9,7 @@ interface SortingBoxProps {
 export const SortingBox: FC<SortingBoxProps> = ({ value, onChange }) => {
   return (
     <>
+      <h4 style={{ marginBottom: '10px' }}>Sorting:</h4>
       <select
         name='select'
         value={value}

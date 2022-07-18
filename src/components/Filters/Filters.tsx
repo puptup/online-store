@@ -118,12 +118,17 @@ export const Form = () => {
 
   return (
     <>
-      <SortingBox value={formState?.sorting || Sorting.ASC} onChange={onSortingChange}></SortingBox>
+      <FilterCategory>
+        <SortingBox
+          value={formState?.sorting || Sorting.ASC}
+          onChange={onSortingChange}
+        ></SortingBox>
+      </FilterCategory>
       <FilterCategory>
         <Searcher searchValue={formState?.search || ''} onChange={onSearchChange}></Searcher>
       </FilterCategory>
       <FilterCategory>
-        <h4>Colors:</h4>
+        <h4 style={{ marginBottom: '10px' }}>Colors:</h4>
         <CheckBoxGroup
           field='color'
           checkedValues={formState?.color}
@@ -132,7 +137,7 @@ export const Form = () => {
         />
       </FilterCategory>
       <FilterCategory>
-        <h4>Brands:</h4>
+        <h4 style={{ marginBottom: '10px' }}>Brands:</h4>
         <CheckBoxGroup
           field='brand'
           checkedValues={formState?.brand}
